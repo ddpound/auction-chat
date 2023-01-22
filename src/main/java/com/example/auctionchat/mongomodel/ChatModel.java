@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Data
-@Document(collation = "chat")
+@Document(collection = "chatModel")
 public class ChatModel {
     @Id
     private String id;

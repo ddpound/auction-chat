@@ -2,11 +2,17 @@ package com.example.auctionchat.service;
 
 
 import com.example.auctionchat.model.ChatRoomModel;
+import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongorepository.ChatModelRepository;
 import com.example.auctionchat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -17,6 +23,8 @@ import java.util.List;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
+
+    private final ChatModelRepository chatModelRepository;
 
     @Transactional
     public int chatRoomRegister(String chatRoomTitle,
@@ -33,6 +41,15 @@ public class ChatRoomService {
         return 1;
     }
 
+    @Transactional(readOnly = true)
+    public Flux<ChatModel> getMsg(String sender, String receiver){
+        return chatModelRepository.mFindBySender(sender,receiver).subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Transactional
+    public Mono<ChatModel> setMsg(@RequestBody ChatModel chatModel){
+        return chatModelRepository.save(chatModel);
+    }
 
     @Transactional(readOnly = true)
     public List<ChatRoomModel> findAllChatRoom(){

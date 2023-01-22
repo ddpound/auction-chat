@@ -56,6 +56,11 @@ dependencies {
     // 랜덤 문자열을 편하게 하기위한 아파치 공통 라이브러리
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
+    // 몽고디비 , 채팅을 위해서
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
     compileOnly project(':module-common')
 }
 

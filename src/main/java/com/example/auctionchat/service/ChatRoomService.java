@@ -36,7 +36,6 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public List<ChatRoomModel> findAllChatRoom(){
-
         // 근데 또 비밀번호를 빼줘야함 이게 아주 골치아픈 상황임
         return chatRoomRepository.findAll();
     }

@@ -13,7 +13,8 @@ public class ChatModel {
     private String id;
     private String msg;
     private String sender;
-    private String receiver;
+    private String receiver; //(귓속말)
+    private Integer roomNum;
 
     private LocalDateTime createAt;
 }

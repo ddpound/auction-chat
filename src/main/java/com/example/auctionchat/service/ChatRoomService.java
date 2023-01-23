@@ -42,8 +42,15 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public Flux<ChatModel> getMsg(String sender, String receiver){
-        return chatModelRepository.mFindBySender(sender,receiver).subscribeOn(Schedulers.boundedElastic());
+    public Flux<ChatModel> whispering(String sender, String receiver){
+        return chatModelRepository.mFindBySender(sender,receiver)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Transactional(readOnly = true)
+    public Flux<ChatModel> findRoom(Integer roomNum){
+        return chatModelRepository.mFindByRoomNum(roomNum)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Transactional

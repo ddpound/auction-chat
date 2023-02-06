@@ -54,7 +54,9 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public Mono<ChatModel> setMsg(@RequestBody ChatModel chatModel){
+    public Mono<ChatModel> sendMsg(@RequestBody ChatModel chatModel){
+
+
         return chatModelRepository.save(chatModel);
     }
 

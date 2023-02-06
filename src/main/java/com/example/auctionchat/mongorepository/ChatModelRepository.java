@@ -5,8 +5,14 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Tailable;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, String> {
+
+    Mono<ChatModel> findByRoomNum(int roomNum);
+
+    void deleteAllByRoomNum(int roomNum);
+
 
     // 귓속말
     @Tailable
@@ -16,6 +22,6 @@ public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, 
 
     @Tailable
     @Query("{roomNum: ?0}")
-    Flux<ChatModel> mFindByRoomNum(Integer roomnum);
+    Flux<ChatModel> mFindByRoomNum(Integer roomNum);
 
 }

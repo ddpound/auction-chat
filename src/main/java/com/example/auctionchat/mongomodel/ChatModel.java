@@ -15,6 +15,8 @@ public class ChatModel {
     private String sender;
     private String receiver; //(귓속말)
     private Integer roomNum;
+    private String roomTitle;
+    private String chief;
 
     private LocalDateTime createAt;
 }

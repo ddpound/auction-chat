@@ -1,6 +1,7 @@
 package com.example.auctionchat.mongorepository;
 
 import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongomodel.Room;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Tailable;
@@ -12,11 +13,8 @@ import java.util.List;
 public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, String> {
 
 
-    Mono<List<ChatModel>> findAllByRoomNum(int roomNum);
-
-    Mono<ChatModel> findByRoomNum(int roomNum);
-
-    void deleteAllByRoomNum(int roomNum);
+    @Query("{distinct: ChatModel, key :  ?0}")
+    Mono<List<ChatModel>> findDistinctByRoomNum(String key);
 
 
     // 귓속말
@@ -24,9 +22,9 @@ public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, 
     @Query("{sender: ?0,receiver: ?1}")
     Flux<ChatModel> mFindBySender(String sender, String receiver); // flux 흐름, response를 유지하면서 데이터 계속 흘려보내기
 
-
     @Tailable
-    @Query("{roomNum: ?0}")
-    Flux<ChatModel> mFindByRoomNum(Integer roomNum);
+    Flux<ChatModel> findByRoom(Room room);
+
+
 
 }

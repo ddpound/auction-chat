@@ -1,9 +1,12 @@
 package com.example.auctionchat.service;
 
 import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongomodel.Room;
 import com.example.auctionchat.mongorepository.ChatModelRepository;
+import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,24 +22,14 @@ public class SellerChatService {
 
     private final ChatModelRepository chatModelRepository;
 
-    @Transactional(readOnly = true)
-    public Mono<List<ChatModel>> findCheckRoom(int id){
-
-
-        return chatModelRepository.findAllByRoomNum(id);
-    }
-
-    public void deleteRoom(int id){
-
-        chatModelRepository.deleteAllByRoomNum(id);
-    }
+    private final RoomRepositry roomRepositry;
 
     @Transactional
-    public Mono<ChatModel> makeRoom(ChatModel chatModel){
-        log.info(chatModel);
+    public Mono<Room> makeRoom(Room room){
+        log.info(room);
 
         try {
-            return chatModelRepository.save(chatModel);
+            return roomRepositry.save(room);
         }catch (Exception e){
             return null;
         }

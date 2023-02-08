@@ -1,7 +1,9 @@
 package com.example.auctionchat.mongomodel;
 
 import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import javax.persistence.Id;
 import java.time.LocalDateTime;
@@ -14,9 +16,9 @@ public class ChatModel {
     private String msg;
     private String sender;
     private String receiver; //(귓속말)
-    private Integer roomNum;
-    private String roomTitle;
-    private String chief;
+
+    @DocumentReference
+    private Room room;
 
     private LocalDateTime createAt;
 }

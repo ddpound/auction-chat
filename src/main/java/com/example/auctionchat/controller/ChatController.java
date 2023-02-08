@@ -1,7 +1,9 @@
 package com.example.auctionchat.controller;
 
 import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongomodel.Room;
 import com.example.auctionchat.service.ChatRoomService;
+import com.example.auctionchat.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
@@ -20,6 +22,9 @@ public class ChatController {
 
     private final ChatRoomService chatRoomService;
 
+    private final RoomService roomService;
+
+
     // 귓속말 용도
     @GetMapping(value = "sender/{sender}/receiver/{receiver}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatModel> whispering(@PathVariable String sender , @PathVariable String receiver){
@@ -32,7 +37,9 @@ public class ChatController {
     @GetMapping(value = "chat/room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatModel> findRoomNum(@PathVariable Integer roomNum){
 
-        return chatRoomService.findRoom(roomNum);
+        Room findRoom = roomService.findRoom(roomNum).block();
+
+        return chatRoomService.requestRoom(findRoom);
     }
 
     @PostMapping("send-message")

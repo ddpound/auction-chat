@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Log4j2
 @RequiredArgsConstructor
 @Service
@@ -18,9 +20,10 @@ public class SellerChatService {
     private final ChatModelRepository chatModelRepository;
 
     @Transactional(readOnly = true)
-    public Mono<ChatModel> findCheckRoom(int id){
+    public Mono<List<ChatModel>> findCheckRoom(int id){
 
-        return chatModelRepository.findByRoomNum(id);
+
+        return chatModelRepository.findAllByRoomNum(id);
     }
 
     public void deleteRoom(int id){

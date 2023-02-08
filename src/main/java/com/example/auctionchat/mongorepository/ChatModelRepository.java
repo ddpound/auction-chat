@@ -7,7 +7,12 @@ import org.springframework.data.mongodb.repository.Tailable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, String> {
+
+
+    Mono<List<ChatModel>> findAllByRoomNum(int roomNum);
 
     Mono<ChatModel> findByRoomNum(int roomNum);
 

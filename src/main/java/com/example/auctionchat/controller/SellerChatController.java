@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -35,10 +37,11 @@ public class SellerChatController {
 
         // 방 중복 테스트
         while(true){
-            Mono<ChatModel> searchChatRoom = sellerChatService.findCheckRoom(makeRoomNum);
-            log.info(searchChatRoom.blockOptional().isPresent());
+            Mono<List<ChatModel>> searchChatRoom = sellerChatService.findCheckRoom(makeRoomNum);
+            log.info(searchChatRoom.block());
 
-            if (searchChatRoom.blockOptional().isPresent()){
+            // 적어도 방한개는 있다는 뜻
+            if (searchChatRoom.block() != null){
                 makeRoomNum = random.nextInt(1000);
                 log.info("제작 방 : "+makeRoomNum);
             }else{

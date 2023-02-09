@@ -54,16 +54,23 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public Flux<ChatModel> requestRoom(Room room){
-        return chatModelRepository.findByRoom(room)
-                .subscribeOn(Schedulers.boundedElastic());
+    public Flux<ChatModel> requestRoom(int roomNum){
+        return chatModelRepository.findByRoomNum(roomNum);
     }
 
     @Transactional
-    public Mono<ChatModel> sendMsg(@RequestBody ChatModel chatModel){
+    public Mono<ChatModel> sendMsg(ChatModel chatModel){
 
+        // 룸이있나 검사
+        Room room = roomRepositry.roomCheck(chatModel.getRoomNum()).block();
 
-        return chatModelRepository.save(chatModel);
+        if(room != null){
+            log.info("save message : "+ chatModel.getMsg());
+            return chatModelRepository.save(chatModel);
+        }else {
+            log.info("not found room: "+ chatModel.getMsg());
+            return null;
+        }
     }
 
     @Transactional(readOnly = true)

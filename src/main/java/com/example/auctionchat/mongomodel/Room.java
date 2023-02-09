@@ -13,8 +13,7 @@ public class Room {
 
     @Id
     @Indexed(unique = true)
-    private Integer roomNum;
-
+    private int roomNum;
 
     private String roomTitle;
     private String chief;

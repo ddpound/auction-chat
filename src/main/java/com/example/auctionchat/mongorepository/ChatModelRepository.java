@@ -2,6 +2,8 @@ package com.example.auctionchat.mongorepository;
 
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.Room;
+import org.hibernate.annotations.BatchSize;
+import org.springframework.data.mongodb.repository.Meta;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Tailable;
@@ -23,7 +25,8 @@ public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, 
     Flux<ChatModel> mFindBySender(String sender, String receiver); // flux 흐름, response를 유지하면서 데이터 계속 흘려보내기
 
     @Tailable
-    Flux<ChatModel> findByRoom(Room room);
+    @Query("{roomNum : ?0}")
+    Flux<ChatModel> findByRoomNum(int roomNum);
 
 
 

@@ -17,8 +17,8 @@ public class RoomService {
 
     private final RoomRepositry roomRepositry;
 
-    public Mono<Room> findRoom(int id){
-        return roomRepositry.findById(id);
+    public Mono<Room> roomCheck(int id){
+        return roomRepositry.roomCheck(id);
     }
 
 }

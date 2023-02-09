@@ -32,15 +32,7 @@ public class ChatController {
     }
 
 
-    // 방을 찾아가고 DB에 메세지와 자기 이름 저장하는 것까지는 유저가 할수있고
-    // 방을 추가하는 것은 판매자만 가능
-    @GetMapping(value = "chat/room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatModel> findRoomNum(@PathVariable Integer roomNum){
 
-        Room findRoom = roomService.findRoom(roomNum).block();
-
-        return chatRoomService.requestRoom(findRoom);
-    }
 
     @PostMapping("send-message")
     public Mono<ChatModel> send(ChatModel chatModel){

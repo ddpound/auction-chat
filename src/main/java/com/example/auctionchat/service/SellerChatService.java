@@ -26,7 +26,6 @@ public class SellerChatService {
 
     @Transactional
     public Mono<Room> makeRoom(Room room){
-        log.info(room);
 
         try {
             return roomRepositry.save(room);

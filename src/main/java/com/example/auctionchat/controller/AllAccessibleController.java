@@ -46,11 +46,12 @@ public class AllAccessibleController {
     @GetMapping(value = "find-room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ChatModel> findRoomNum(@PathVariable Integer roomNum){
 
-        Room findRoom = roomService.findRoom(roomNum).block();
+        //Room findRoom = roomService.roomCheck(roomNum).block();
 
-        log.info("접속 요청 : "+roomNum);
+        log.info("접속 요청 : "+ roomNum);
+        //log.info("방 요청 결과  : "+ findRoom);
 
-        return chatRoomService.requestRoom(findRoom).subscribeOn(Schedulers.boundedElastic());
+        return chatRoomService.requestRoom(roomNum).subscribeOn(Schedulers.boundedElastic());
     }
 
 

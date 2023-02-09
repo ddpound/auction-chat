@@ -53,7 +53,7 @@ public class ChatRoomService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     public Flux<ChatModel> requestRoom(int roomNum){
         return chatModelRepository.findByRoomNum(roomNum);
     }
@@ -66,6 +66,8 @@ public class ChatRoomService {
 
         if(room != null){
             log.info("save message : "+ chatModel.getMsg());
+
+
             return chatModelRepository.save(chatModel);
         }else {
             log.info("not found room: "+ chatModel.getMsg());
@@ -74,12 +76,8 @@ public class ChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public Mono<List<ChatModel>> findAllChatRoom(){
-
-
-
-
-        return null;
+    public Mono<List<Room>> findAllChatRoom(){
+        return roomRepositry.findAll().collectList();
     }
 
 }

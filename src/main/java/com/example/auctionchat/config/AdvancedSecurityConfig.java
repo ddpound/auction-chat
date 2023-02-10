@@ -50,7 +50,7 @@ public class AdvancedSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http , AuthenticationManager authenticationManager, HttpServletRequest request) throws Exception {
         http
                 .authorizeRequests()
-                .anyRequest().hasIpAddress("192.168.219.106")
+                .anyRequest().hasIpAddress("192.168.219.105")
                 //.anyRequest().permitAll()
                 .and()
                 // cors config 클래스로 설정을 줄꺼여서 그냥 이대로 주석처리

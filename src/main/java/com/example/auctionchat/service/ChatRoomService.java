@@ -1,12 +1,10 @@
 package com.example.auctionchat.service;
 
 
-import com.example.auctionchat.model.ChatRoomModel;
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.Room;
 import com.example.auctionchat.mongorepository.ChatModelRepository;
 import com.example.auctionchat.mongorepository.RoomRepositry;
-import com.example.auctionchat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,26 +24,10 @@ import java.util.List;
 @Service
 public class ChatRoomService {
 
-    private final ChatRoomRepository chatRoomRepository;
-
     private final ChatModelRepository chatModelRepository;
 
     private final RoomRepositry roomRepositry;
 
-    @Transactional
-    public int chatRoomRegister(String chatRoomTitle,
-                                HttpServletRequest request){
-
-
-        ChatRoomModel chatRoomModel = ChatRoomModel.builder()
-                .title(chatRoomTitle)
-                .username("")
-                .build();
-
-        chatRoomRepository.save(chatRoomModel);
-
-        return 1;
-    }
 
     @Transactional(readOnly = true)
     public Flux<ChatModel> whispering(String sender, String receiver){

@@ -1,6 +1,5 @@
 package com.example.auctionchat.controller;
 
-import com.example.auctionchat.model.ChatRoomModel;
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.Room;
 import com.example.auctionchat.service.ChatRoomService;

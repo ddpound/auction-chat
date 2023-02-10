@@ -16,5 +16,7 @@ public class Room {
     private int roomNum;
 
     private String roomTitle;
+
+    private String thumbnail;
     private String chief;
 }

@@ -22,5 +22,7 @@ public class ProductModel {
 
     private int price;
 
+    private int seller;
+
     private int quantity;
 }

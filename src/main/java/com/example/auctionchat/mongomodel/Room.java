@@ -17,6 +17,7 @@ public class Room {
 
     private String roomTitle;
 
+    private String videoUrl;
     private String thumbnail;
     private String chief;
 }

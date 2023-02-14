@@ -54,5 +54,10 @@ public class AllAccessibleController {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    @GetMapping(value = "find-room/{roomNum}/check-video-url")
+    public Mono<Room> findRoomVideoUrl(@PathVariable Integer roomNum){
+        return roomService.roomCheck(roomNum);
+    }
+
 
 }

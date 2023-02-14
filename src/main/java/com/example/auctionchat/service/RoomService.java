@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -19,6 +20,15 @@ public class RoomService {
 
     public Mono<Room> roomCheck(int id){
         return roomRepositry.roomCheck(id);
+    }
+
+    public Mono<Room> roomVideoUrlChange(Room room){
+
+        Mono<Room> findRoom = roomRepositry.findById(room.getRoomNum());
+
+        Objects.requireNonNull(findRoom.block()).setVideoUrl(room.getVideoUrl());
+
+        return findRoom;
     }
 
 }

@@ -34,30 +34,7 @@ public class SellerChatController {
 
     private final RoomService roomService;
 
-    @PostMapping(value = "make-room")
-    public Mono<Room> makeChatRoom(Room room){
-        Random random = new Random();
-        int makeRoomNum = 1;
 
-        // 방 중복 테스트
-        while(true){
-            Mono<Room> searchChatRoom = roomService.roomCheck(makeRoomNum);
-            log.info(searchChatRoom.block());
-
-            // 적어도 방한개는 있다는 뜻
-            if (searchChatRoom.block() != null){
-                makeRoomNum = random.nextInt(1000);
-                log.info("제작 방 : "+ makeRoomNum);
-            }else{
-                break;
-            }
-        }
-
-
-        room.setRoomNum(makeRoomNum);
-
-        return sellerChatService.makeRoom(room);
-    }
 
     @DeleteMapping(value = "delete-room")
     public String deleteChatRoom(@RequestBody ChatModel chatModel){

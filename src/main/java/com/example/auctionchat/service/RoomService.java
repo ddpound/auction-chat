@@ -22,6 +22,15 @@ public class RoomService {
         return roomRepositry.roomCheck(id);
     }
 
+    public Mono<Room> findRoomChief(String chief){
+        return roomRepositry.findByChief(chief);
+    }
+
+    public void deleteRoomByChief(String chief){
+       roomRepositry.deleteAllByChief(chief).subscribe();
+
+    }
+
     public Mono<Room> roomVideoUrlChange(Room room){
 
         Mono<Room> findRoom = roomRepositry.findById(room.getRoomNum());

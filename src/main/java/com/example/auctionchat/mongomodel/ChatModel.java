@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @Document(collection = "chatModel")
 public class ChatModel {
+
     @Id
     private String id;
     private String msg;

@@ -1,6 +1,7 @@
 package com.example.auctionchat.mongorepository;
 
 import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongomodel.DeleteResult;
 import com.example.auctionchat.mongomodel.Room;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.data.mongodb.repository.Meta;
@@ -17,9 +18,11 @@ import java.util.List;
 public interface ChatModelRepository extends ReactiveMongoRepository<ChatModel, String> {
 
 
-    @Query("{distinct: ChatModel, key :  ?0}")
+
     Mono<List<ChatModel>> findDistinctByRoomNum(String key);
 
+
+    Mono<DeleteResult> deleteAllByRoomNum(int roomNum);
 
     // 귓속말
     @Tailable

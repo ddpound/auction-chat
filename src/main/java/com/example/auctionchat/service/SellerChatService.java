@@ -7,6 +7,8 @@ import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ public class SellerChatService {
     private final RoomRepositry roomRepositry;
 
 
+
     public Mono<Room> makeRoom(Room room){
 
         Random random = new Random();
@@ -46,18 +49,24 @@ public class SellerChatService {
                 break;
             }
 
-            Mono<Room> searchChatRoomByChief = roomService.findRoomChief(room.getChief());
+            // 룸이 여러개 있다는 것도 가정해야함
+            Flux<Room> searchChatRoomByChief = roomService.findAllRoomChief(room.getChief());
+            System.out.println(searchChatRoomByChief.collectList().block().get(0).getRoomNum());
 
             if(searchChatRoomByChief != null){
                 log.info("이미 있는방으로,삭제후 새로만들겠습니다.");
 
-                chatModelRepository.deleteAllByRoomNum(searchChatRoomByChief.blockOptional().get().getRoomNum()).subscribe();
-                roomService.deleteRoomByChief(room.getChief());
+                for (Room roomNumber : searchChatRoomByChief.collectList().block()
+                     ) {
+                    deleteByRoomNum(roomNumber.getRoomNum());
+                    deleteRoomByChief(roomNumber.getChief());
+
+                }
+
 
             }
 
         }
-
 
         room.setRoomNum(makeRoomNum);
 
@@ -67,6 +76,15 @@ public class SellerChatService {
             return null;
         }
 
+    }
+
+    public void deleteByRoomNum(int id){
+        chatModelRepository.deleteByRoomNum(id);
+    }
+
+    public void deleteRoomByChief(String chief){
+
+        roomService.deleteRoomByChief(chief);
     }
 
 

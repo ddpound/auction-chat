@@ -36,7 +36,7 @@ public class AllAccessibleController {
     @GetMapping(value = "find-all-chat-room")
     public Mono<List<Room>> findAllChatRoomList(){
 
-        return chatRoomService.findAllChatRoom().subscribeOn(Schedulers.single());
+        return chatRoomService.findAllChatRoom();
     }
 
     // 참가는 자유롭게 가능 허나 메세지 보내는 것은 로그인후 가능
@@ -56,6 +56,9 @@ public class AllAccessibleController {
     public Mono<Room> findRoomVideoUrl(@PathVariable Integer roomNum){
         return roomService.roomCheck(roomNum);
     }
+
+
+
 
 
 }

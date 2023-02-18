@@ -31,7 +31,7 @@ public interface RoomRepositry extends ReactiveMongoRepository<Room,Integer> {
     Flux<Room> findAllByChief(String chief);
 
     //@Query(value = "{chief : ?0}" ,delete = true)
-    Flux<List<Room>> deleteByChief(String chief);
+    Flux<List<Room>> deleteRoomByChief(String chief);
 
     Flux<List<Room>> deleteByRoomNum(int roomNum);
 

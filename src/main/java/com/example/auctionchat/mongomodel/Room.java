@@ -12,6 +12,8 @@ import javax.persistence.Id;
 public class Room {
 
     @Id
+    private String id;
+
     @Indexed(unique = true)
     private int roomNum;
 

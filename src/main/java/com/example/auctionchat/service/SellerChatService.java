@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 @Log4j2
@@ -31,10 +32,13 @@ public class SellerChatService {
 
 
 
+
     public Mono<Room> makeRoom(Room room){
 
         Random random = new Random();
         int makeRoomNum = 1;
+
+        System.out.println("제작 요청한 룸 : "+ room);
 
         // 방 중복 테스트
         while(true){
@@ -49,43 +53,45 @@ public class SellerChatService {
                 break;
             }
 
-            // 룸이 여러개 있다는 것도 가정해야함
-            Flux<Room> searchChatRoomByChief = roomService.findAllRoomChief(room.getChief());
-            System.out.println(searchChatRoomByChief.collectList().block().get(0).getRoomNum());
-
-            if(searchChatRoomByChief != null){
-                log.info("이미 있는방으로,삭제후 새로만들겠습니다.");
-
-                for (Room roomNumber : searchChatRoomByChief.collectList().block()
-                     ) {
-                    deleteByRoomNum(roomNumber.getRoomNum());
-                    deleteRoomByChief(roomNumber.getChief());
-
-                }
-
-
-            }
-
         }
 
-        room.setRoomNum(makeRoomNum);
+        // 룸이 여러개 이미, 만들어진 방장의 방이있었다면.
+        Flux<Room> searchChatRoomByChief = roomService.findAllRoomChief(room.getChief());
+
+
+
 
         try {
+
+            if(Objects.requireNonNull(searchChatRoomByChief.collectList().block()).size() > 0){
+                log.info("이미 있는방으로,삭제후 새로만들겠습니다.");
+
+                System.out.println("1 : "+searchChatRoomByChief.collectList().block().get(0).getRoomNum());
+                System.out.println("2 : "+searchChatRoomByChief.collectList().block());
+
+                // 방장이 만들었던 룸 전부 검색해 map
+                // 방장의 각각의 룸에 있던 채팅기록 전부 삭제
+                // 마지막으로 방 삭제
+                searchChatRoomByChief.map(room1 -> {
+                    Flux<ChatModel> searchChatModelByRoom = chatModelRepository.findNonTailableByRoomNum(room1.getRoomNum());
+
+                    searchChatModelByRoom.map(chatModel -> chatModelRepository.delete(chatModel).subscribe()).subscribe();
+
+                    return roomRepositry.delete(room1).subscribe();
+                }).subscribe();
+            }
+
+            room.setRoomNum(makeRoomNum);
+
             return roomRepositry.save(room);
+
         }catch (Exception e){
+            e.printStackTrace();
             return null;
         }
 
     }
 
-    public void deleteByRoomNum(int id){
-        chatModelRepository.deleteByRoomNum(id);
-    }
-
-    public void deleteRoomByChief(String chief){
-
-        roomService.deleteRoomByChief(chief);
-    }
 
 
 

@@ -38,7 +38,7 @@ public class RoomService {
 
 
     public void deleteRoomByChief(String chief){
-       roomRepositry.deleteByChief(chief);
+       roomRepositry.deleteRoomByChief(chief);
     }
 
 

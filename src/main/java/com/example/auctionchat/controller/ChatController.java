@@ -37,7 +37,7 @@ public class ChatController {
     @PostMapping("send-message")
     public Mono<ChatModel> send(ChatModel chatModel){
 
-        System.out.println(chatModel);
+
         return chatRoomService.sendMsg(chatModel);
     }
 

@@ -1,12 +1,16 @@
 package com.example.auctionchat.controller;
 
 import com.example.auctionchat.mongomodel.ChatModel;
+import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongomodel.Room;
 import com.example.auctionchat.service.ChatRoomService;
+import com.example.auctionchat.service.ProductService;
 import com.example.auctionchat.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +31,8 @@ public class AllAccessibleController {
 
     private final RoomService roomService;
 
+    private final ProductService productService;
+
 
     @GetMapping("hello")
     public String testHello(){
@@ -41,7 +47,7 @@ public class AllAccessibleController {
 
     // 참가는 자유롭게 가능 허나 메세지 보내는 것은 로그인후 가능
     @GetMapping(value = "find-room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ChatModel> findRoomNum(@PathVariable Integer roomNum){
+    public Flux<ResponseEntity<ChatModel>> findRoomNum(@PathVariable Integer roomNum){
 
         //Room findRoom = roomService.roomCheck(roomNum).block();
 
@@ -58,7 +64,11 @@ public class AllAccessibleController {
     }
 
 
+    @GetMapping(value = "find-product/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ResponseEntity<ProductModel>> findProduct(@PathVariable Integer roomNum){
 
-
-
+        return productService.findListProduct(roomNum)
+                .map(productModel -> new ResponseEntity<>(productModel, HttpStatus.OK))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
 }

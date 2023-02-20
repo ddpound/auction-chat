@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -83,6 +84,7 @@ public class SellerChatService {
 
             room.setRoomNum(makeRoomNum);
 
+            room.setCreateAt(LocalDateTime.now());
             return roomRepositry.save(room);
 
         }catch (Exception e){

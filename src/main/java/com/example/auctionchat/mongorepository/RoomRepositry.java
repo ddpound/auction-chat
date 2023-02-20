@@ -17,7 +17,6 @@ import java.util.List;
 public interface RoomRepositry extends ReactiveMongoRepository<Room,Integer> {
 
 
-    @Tailable
     @Query("{roomNum: ?0}")
     Flux<Room> findByRoomNum(int roomNum);
 

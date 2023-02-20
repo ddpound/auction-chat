@@ -8,6 +8,8 @@ import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +19,9 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -36,11 +40,20 @@ public class ChatRoomService {
     }
 
     //@Transactional(readOnly = true)
-    public Flux<ChatModel> requestRoom(int roomNum){
-        return chatModelRepository.findByRoomNum(roomNum);
+    public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
+
+        if (Objects.requireNonNull(roomRepositry.findByRoomNum(roomNum).collectList().block()).size() > 0) {
+            return chatModelRepository
+                    .findByRoomNum(roomNum)
+                    .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK));
+        } else {
+            return chatModelRepository
+                    .findByRoomNum(roomNum)
+                    .map(chatModel -> new ResponseEntity<>(null, HttpStatus.BAD_REQUEST));
+        }
+
     }
 
-    @Transactional
     public Mono<ChatModel> sendMsg(ChatModel chatModel){
 
         // 룸이있나 검사
@@ -49,7 +62,7 @@ public class ChatRoomService {
         if(room != null){
             log.info("save message : "+ chatModel.getMsg());
 
-
+            chatModel.setCreateAt(LocalDateTime.now());
             return chatModelRepository.save(chatModel);
         }else {
             log.info("not found room: "+ chatModel.getMsg());
@@ -57,7 +70,7 @@ public class ChatRoomService {
         }
     }
 
-    @Transactional(readOnly = true)
+
     public Mono<List<Room>> findAllChatRoom(){
         return roomRepositry.findAll().collectList();
     }

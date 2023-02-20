@@ -27,7 +27,6 @@ public class SellerRoomController {
     @PostMapping(value = "make-room")
     public Mono<Room> makeChatRoom(Room room){
 
-
         return sellerChatService.makeRoom(room);
     }
 

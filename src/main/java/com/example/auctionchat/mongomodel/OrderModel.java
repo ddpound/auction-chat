@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 
 /**
@@ -33,6 +34,8 @@ public class OrderModel {
     private int price;
 
     private int quantity;
+
+    private LocalDateTime createAt;
 
 
 }

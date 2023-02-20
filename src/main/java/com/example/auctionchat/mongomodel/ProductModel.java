@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 /**
  * 실시간 옥션에 올려놓을 물건을 말함
@@ -24,5 +25,13 @@ public class ProductModel {
 
     private int seller;
 
+    private int roomNum;
+
+    // 경매 유무를 따짐, 참일때 경매제품,
+    // 아니면 일반제품
+    private boolean auction;
+
     private int quantity;
+
+    private LocalDateTime createAt;
 }

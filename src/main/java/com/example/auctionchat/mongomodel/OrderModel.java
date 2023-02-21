@@ -25,8 +25,6 @@ public class OrderModel {
     @DocumentReference
     private ProductModel productModel;
 
-    private String orderName;
-
     private int seller;
 
     private int buyer;

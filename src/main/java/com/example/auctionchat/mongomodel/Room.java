@@ -22,6 +22,8 @@ public class Room {
 
     private String videoUrl;
     private String thumbnail;
+
+    private int chiefId;
     private String chief;
 
     private LocalDateTime createAt;

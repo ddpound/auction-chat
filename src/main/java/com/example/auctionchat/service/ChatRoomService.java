@@ -8,6 +8,7 @@ import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.ObjectUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,29 +45,35 @@ public class ChatRoomService {
     //@Transactional(readOnly = true)
     public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
 
-//        if (Objects.requireNonNull(roomRepositry
-//                .findByRoomNum(roomNum)
-//                .collectList().subscribeOn(Schedulers.single()).block()).size() > 0
-//        ) {
-            return chatModelRepository
-                    .findByRoomNum(roomNum)
-                    .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK))
-                    .publishOn(Schedulers.boundedElastic());
-        //}
-//        else {
-//            return null;
-//        }
+        return chatModelRepository
+                .findByRoomNum(roomNum)
+                .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK))
+                .subscribeOn(Schedulers.boundedElastic())
+                .switchIfEmpty(Mono.defer(()-> Mono.just(new ResponseEntity<>(null, HttpStatus.BAD_REQUEST))));
+
 
     }
 
+
+
+
     public Mono<ChatModel> sendMsg(ChatModel chatModel){
 
+        // 룸이있나 검사
+        Room room = roomRepositry.roomCheck(chatModel.getRoomNum())
+                .subscribeOn(Schedulers.immediate()).block();
 
+
+
+        if(room != null){
             log.info("save message : "+ chatModel.getMsg());
 
             chatModel.setCreateAt(LocalDateTime.now());
             return chatModelRepository.save(chatModel);
-
+        }else {
+            log.info("not found room: "+ chatModel.getMsg());
+            return null;
+        }
     }
 
 

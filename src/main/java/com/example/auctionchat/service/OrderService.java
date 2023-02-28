@@ -29,6 +29,14 @@ public class OrderService {
                 .subscribeOn(Schedulers.single());
     }
 
+    public Mono<ResponseEntity<String>> deleteOrder(OrderModel orderModel){
+
+        return orderRepository
+                .delete(orderModel)
+                .map(orderModel1 -> new ResponseEntity<>("success delete", HttpStatus.OK))
+                .subscribeOn(Schedulers.single());
+    }
+
 
     public Flux<OrderModel> checkOrderList(OrderModel orderModel){
 

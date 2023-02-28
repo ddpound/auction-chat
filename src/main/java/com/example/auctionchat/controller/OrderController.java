@@ -6,10 +6,7 @@ import com.example.auctionchat.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
@@ -25,6 +22,14 @@ public class OrderController {
     public Mono<ResponseEntity<String>> saveOrder(@RequestBody OrderModel orderModel){
 
         return orderService.saveOrder(orderModel);
+    }
+
+
+
+    @DeleteMapping(value = "delete")
+    public Mono<ResponseEntity<String>> deleteOrder(@RequestBody OrderModel orderModel){
+
+        return orderService.deleteOrder(orderModel);
     }
 
 

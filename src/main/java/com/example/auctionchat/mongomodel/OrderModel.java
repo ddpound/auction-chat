@@ -29,8 +29,6 @@ public class OrderModel {
 
     private int buyer;
 
-    private int price;
-
     private int quantity;
 
     private LocalDateTime createAt;

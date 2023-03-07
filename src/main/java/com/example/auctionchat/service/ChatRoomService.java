@@ -36,22 +36,20 @@ public class ChatRoomService {
     private final RoomRepositry roomRepositry;
 
 
-    @Transactional(readOnly = true)
+    //@Transactional(readOnly = true)
     public Flux<ChatModel> whispering(String sender, String receiver){
         return chatModelRepository.mFindBySender(sender,receiver)
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
     //@Transactional(readOnly = true)
-    public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
 
+    public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
         return chatModelRepository
                 .findByRoomNum(roomNum)
                 .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK))
                 .subscribeOn(Schedulers.boundedElastic())
                 .switchIfEmpty(Mono.defer(()-> Mono.just(new ResponseEntity<>(null, HttpStatus.BAD_REQUEST))));
-
-
     }
 
 

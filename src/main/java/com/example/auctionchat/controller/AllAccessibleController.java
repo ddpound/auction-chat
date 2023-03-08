@@ -3,12 +3,21 @@ package com.example.auctionchat.controller;
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongomodel.Room;
+import com.example.auctionchat.mongorepository.ChatModelRepository;
 import com.example.auctionchat.service.ChatRoomService;
 import com.example.auctionchat.service.ProductService;
 import com.example.auctionchat.service.RoomService;
+import com.mongodb.CursorType;
+import com.mongodb.reactivestreams.client.MongoClient;
+import com.mongodb.reactivestreams.client.MongoCollection;
 import com.sun.nio.sctp.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.mongo.ReactiveMongoClientFactory;
+import org.springframework.data.mongodb.core.ReactiveMongoOperations;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +26,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
 
 
 import java.time.Duration;
@@ -37,6 +48,8 @@ public class AllAccessibleController {
     private final RoomService roomService;
 
     private final ProductService productService;
+
+    private final MongoClient mongoClient;
 
 
 
@@ -81,6 +94,7 @@ public class AllAccessibleController {
     }
 
     private Flux<ServerSentEvent<Notification>> getHeartbeatStream() {
+
         return Flux.interval(Duration.ofSeconds(2))
                 .map(i -> ServerSentEvent.<Notification>builder().event("ping").build())
                 .doFinally(signalType -> {
@@ -90,6 +104,7 @@ public class AllAccessibleController {
     }
 
     private Flux<Object> getEventMessageStream(Integer roomNum) {
+
         return chatRoomService.requestRoom(roomNum)
                 .subscribeOn(Schedulers.boundedElastic())
                 .filter(data -> data.getBody() != null)
@@ -105,8 +120,13 @@ public class AllAccessibleController {
 
         log.info("접속 요청 : "+ roomNum);
         //log.info("방 요청 결과  : "+ findRoom);
-
-        return Flux.merge(getEventMessageStream(roomNum), getHeartbeatStream());
+        return Flux.merge(getEventMessageStream(roomNum), getHeartbeatStream())
+                .subscribeOn(Schedulers.boundedElastic())
+                .doFinally(signalType -> {
+                    log.info("END");
+                    log.info(signalType);
+                    log.info("채팅방 종료");
+                });
     }
 
 

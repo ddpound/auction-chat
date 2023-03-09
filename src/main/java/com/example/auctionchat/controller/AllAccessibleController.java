@@ -49,7 +49,6 @@ public class AllAccessibleController {
 
     private final ProductService productService;
 
-    private final MongoClient mongoClient;
 
 
 

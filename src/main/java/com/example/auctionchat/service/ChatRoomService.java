@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,9 @@ public class ChatRoomService {
 
     private final RoomRepositry roomRepositry;
 
+
+    // @tailable 어노테이션의 문제점 발견, 템플레이트를 통해 접근하기로함
+    private final ReactiveMongoTemplate reactiveMongoTemplate;
 
     //@Transactional(readOnly = true)
     public Flux<ChatModel> whispering(String sender, String receiver){

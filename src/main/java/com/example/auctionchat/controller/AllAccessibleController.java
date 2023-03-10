@@ -13,11 +13,8 @@ import com.mongodb.reactivestreams.client.MongoCollection;
 import com.sun.nio.sctp.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.mongo.ReactiveMongoClientFactory;
-import org.springframework.data.mongodb.core.ReactiveMongoOperations;
-import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+
+import org.reactivestreams.Subscription;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +46,7 @@ public class AllAccessibleController {
 
     private final ProductService productService;
 
-
-
+    private final MongoClient mongoClient;
 
     @GetMapping("hello")
     public String testHello(){
@@ -105,7 +101,6 @@ public class AllAccessibleController {
     private Flux<Object> getEventMessageStream(Integer roomNum) {
 
         return chatRoomService.requestRoom(roomNum)
-                .subscribeOn(Schedulers.boundedElastic())
                 .filter(data -> data.getBody() != null)
                 .map(data -> ServerSentEvent
                         .builder(data)
@@ -117,13 +112,18 @@ public class AllAccessibleController {
 
         //Room findRoom = roomService.roomCheck(roomNum).block();
 
+        Flux<Object> findObject = Flux.merge(getEventMessageStream(roomNum), getHeartbeatStream());
+
+        Disposable disposable = findObject.subscribe();
+
         log.info("접속 요청 : "+ roomNum);
         //log.info("방 요청 결과  : "+ findRoom);
-        return Flux.merge(getEventMessageStream(roomNum), getHeartbeatStream())
-                .subscribeOn(Schedulers.boundedElastic())
+        return findObject.subscribeOn(Schedulers.boundedElastic())
                 .doFinally(signalType -> {
                     log.info("END");
                     log.info(signalType);
+
+                    disposable.dispose();
                     log.info("채팅방 종료");
                 });
     }

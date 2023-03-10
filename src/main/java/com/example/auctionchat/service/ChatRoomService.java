@@ -7,15 +7,15 @@ import com.example.auctionchat.mongorepository.ChatModelRepository;
 import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang.ObjectUtils;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.MongoTemplate;
+
+import org.springframework.data.mongodb.core.ReactiveFindOperation;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
+
 import reactor.core.CoreSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+
 
 @Log4j2
 @RequiredArgsConstructor
@@ -49,10 +50,22 @@ public class ChatRoomService {
     //@Transactional(readOnly = true)
 
     public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
-        return chatModelRepository
-                .findByRoomNum(roomNum)
+
+        Query query = new Query(Criteria.where("roomNum").is(roomNum));
+
+        ReactiveFindOperation.TerminatingFind<ChatModel> find = reactiveMongoTemplate
+                .query(ChatModel.class)
+                .matching(query);
+
+
+//        return chatModelRepository
+//                .findByRoomNum(roomNum)
+//                .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK))
+//                .subscribeOn(Schedulers.boundedElastic())
+//                .switchIfEmpty(Mono.defer(()-> Mono.just(new ResponseEntity<>(null, HttpStatus.BAD_REQUEST))));
+
+        return find.tail()
                 .map(chatModel -> new ResponseEntity<>(chatModel, HttpStatus.OK))
-                .subscribeOn(Schedulers.boundedElastic())
                 .switchIfEmpty(Mono.defer(()-> Mono.just(new ResponseEntity<>(null, HttpStatus.BAD_REQUEST))));
     }
 

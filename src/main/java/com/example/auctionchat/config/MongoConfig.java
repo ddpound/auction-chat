@@ -16,11 +16,11 @@ public class MongoConfig {
         return MongoClientSettings.builder()
                 .retryWrites(true)
                 .applyToConnectionPoolSettings((ConnectionPoolSettings.Builder builder) -> {
-                    builder.maxSize(300) //connections count
-                            .minSize(100)
-                            .maxConnectionLifeTime(0, TimeUnit.MILLISECONDS)
-                            .maxConnectionIdleTime(0, TimeUnit.MILLISECONDS)
-                            .maxWaitTime(5000, TimeUnit.MILLISECONDS);
+                    builder.maxSize(20) //connections count
+                            .minSize(5)
+                            .maxConnectionLifeTime(5, TimeUnit.SECONDS)
+                            .maxConnectionIdleTime(5, TimeUnit.SECONDS)
+                            .maxWaitTime(5000, TimeUnit.SECONDS);
                 })
                 .applyToSocketSettings(builder -> {
                     builder.connectTimeout(2000, TimeUnit.MILLISECONDS);

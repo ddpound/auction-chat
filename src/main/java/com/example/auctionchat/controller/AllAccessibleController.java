@@ -92,10 +92,7 @@ public class AllAccessibleController {
 
         return Flux.interval(Duration.ofSeconds(2))
                 .map(i -> ServerSentEvent.<Notification>builder().event("ping").build())
-                .doFinally(signalType -> {
-                    log.info("END");
-                    log.info(signalType);
-                });
+                .doFinally(log::info);
     }
 
     private Flux<Object> getEventMessageStream(Integer roomNum) {
@@ -114,16 +111,10 @@ public class AllAccessibleController {
 
         Flux<Object> findObject = Flux.merge(getEventMessageStream(roomNum), getHeartbeatStream());
 
-        Disposable disposable = findObject.subscribe();
-
         log.info("접속 요청 : "+ roomNum);
         //log.info("방 요청 결과  : "+ findRoom);
         return findObject.subscribeOn(Schedulers.boundedElastic())
                 .doFinally(signalType -> {
-                    log.info("END");
-                    log.info(signalType);
-
-                    disposable.dispose();
                     log.info("채팅방 종료");
                 });
     }

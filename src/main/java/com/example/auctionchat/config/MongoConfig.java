@@ -16,7 +16,7 @@ public class MongoConfig {
         return MongoClientSettings.builder()
                 .retryWrites(true)
                 .applyToConnectionPoolSettings((ConnectionPoolSettings.Builder builder) -> {
-                    builder.maxSize(20) //connections count
+                    builder.maxSize(500) //connections count
                             .minSize(5)
                             .maxConnectionLifeTime(5, TimeUnit.SECONDS)
                             .maxConnectionIdleTime(5, TimeUnit.SECONDS)

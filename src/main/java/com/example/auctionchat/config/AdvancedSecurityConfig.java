@@ -2,6 +2,7 @@ package com.example.auctionchat.config;
 
 
 import com.example.auctionchat.filter.LocalHostCheckFilter;
+import com.example.auctionchat.mongomodel.ProductModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.web.filter.CorsFilter;
+import reactor.core.publisher.Sinks;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor // 요즘 autowierd 대신쓰기위해 나온것
 @Configuration
 public class AdvancedSecurityConfig {
-
-
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){

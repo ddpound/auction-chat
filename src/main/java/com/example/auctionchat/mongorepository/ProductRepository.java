@@ -1,6 +1,7 @@
 package com.example.auctionchat.mongorepository;
 
 import com.example.auctionchat.mongomodel.ProductModel;
+import org.springframework.data.mongodb.core.ChangeStreamEvent;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.data.mongodb.repository.Tailable;
@@ -11,6 +12,5 @@ public interface ProductRepository extends ReactiveMongoRepository<ProductModel,
     @Tailable
     @Query("{roomNum :  ?0}")
     Flux<ProductModel> findRoomReturnProduct(int roomNum);
-
 
 }

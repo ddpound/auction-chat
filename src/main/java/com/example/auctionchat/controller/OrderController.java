@@ -1,13 +1,18 @@
 package com.example.auctionchat.controller;
 
+import com.example.auctionchat.dto.AuctionRaiseDto;
 import com.example.auctionchat.models.Order;
 import com.example.auctionchat.mongomodel.OrderModel;
+import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.service.OrderService;
+import com.example.auctionchat.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -17,6 +22,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    private final ProductService productService;
 
     @PostMapping(value = "save")
     public Mono<ResponseEntity<String>> saveOrder(@RequestBody OrderModel orderModel){
@@ -31,9 +37,12 @@ public class OrderController {
     }
 
     @PostMapping(value = "raise")
-    public Mono<ResponseEntity<String>> raisePorudct(){
+    public Mono<ProductModel> raisePorudct(@RequestBody AuctionRaiseDto auctionRaiseDto){
 
-        return null;
+        System.out.println(auctionRaiseDto);
+        return productService
+                .raisePriceProduct(auctionRaiseDto)
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
 

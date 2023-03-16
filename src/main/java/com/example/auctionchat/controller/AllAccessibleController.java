@@ -1,5 +1,6 @@
 package com.example.auctionchat.controller;
 
+import com.example.auctionchat.config.SinkComponent;
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongomodel.Room;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 
 
@@ -46,7 +48,7 @@ public class AllAccessibleController {
 
     private final ProductService productService;
 
-    private final MongoClient mongoClient;
+    private final SinkComponent sinkComponent;
 
     @GetMapping("hello")
     public String testHello(){

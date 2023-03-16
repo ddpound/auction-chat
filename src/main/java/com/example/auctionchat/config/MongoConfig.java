@@ -1,14 +1,17 @@
 package com.example.auctionchat.config;
 
+import com.example.auctionchat.mongomodel.ProductModel;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.connection.ConnectionPoolSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import reactor.core.publisher.Sinks;
 
 import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class MongoConfig {
+
 
     @Bean
     public MongoClientSettings mongoClientSettings() {

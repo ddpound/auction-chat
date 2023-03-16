@@ -31,6 +31,8 @@ public class ProductModel {
     // 아니면 일반제품
     private boolean auction;
 
+    private String finalBuyer;
+
     private int quantity;
 
     private LocalDateTime createAt;

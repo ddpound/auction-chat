@@ -4,19 +4,13 @@ import com.example.auctionchat.config.SinkComponent;
 import com.example.auctionchat.mongomodel.ChatModel;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongomodel.Room;
-import com.example.auctionchat.mongorepository.ChatModelRepository;
 import com.example.auctionchat.service.ChatRoomService;
 import com.example.auctionchat.service.ProductService;
 import com.example.auctionchat.service.RoomService;
-import com.mongodb.CursorType;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoCollection;
 import com.sun.nio.sctp.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.reactivestreams.Subscription;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
@@ -24,10 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 
 
@@ -83,9 +75,9 @@ public class AllAccessibleController {
 
 
     @GetMapping(value = "find-product/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ResponseEntity<ProductModel>> findProduct(@PathVariable Integer roomNum){
+    public Flux<ProductModel> findProduct(@PathVariable Integer roomNum){
 
-        return productService.watchProductUpdates(roomNum);
+        return productService.findListProduct(roomNum);
     }
 
     private Flux<ServerSentEvent<Notification>> getHeartbeatStream() {

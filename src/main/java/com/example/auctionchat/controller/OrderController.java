@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "raise")
-    public Mono<ProductModel> raisePorudct(@RequestBody AuctionRaiseDto auctionRaiseDto){
+    public Mono<ResponseEntity<String>> raisePorudct(@RequestBody AuctionRaiseDto auctionRaiseDto){
 
         System.out.println(auctionRaiseDto);
         return productService

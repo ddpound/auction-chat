@@ -75,9 +75,9 @@ public class AllAccessibleController {
 
 
     @GetMapping(value = "find-product/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ProductModel> findProduct(@PathVariable Integer roomNum){
+    public Flux<ResponseEntity<ProductModel>> findProduct(@PathVariable Integer roomNum){
 
-        return productService.findListProduct(roomNum);
+        return productService.watchProductUpdates(roomNum);
     }
 
     private Flux<ServerSentEvent<Notification>> getHeartbeatStream() {

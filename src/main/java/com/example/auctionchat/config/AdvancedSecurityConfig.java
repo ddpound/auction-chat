@@ -4,6 +4,7 @@ package com.example.auctionchat.config;
 import com.example.auctionchat.filter.LocalHostCheckFilter;
 import com.example.auctionchat.mongomodel.ProductModel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor // 요즘 autowierd 대신쓰기위해 나온것
 @Configuration
 public class AdvancedSecurityConfig {
+
+    @Value("${securityIpAddress.AuthorizedAddress}")
+    private String authorizedAddress;
+
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -50,7 +55,7 @@ public class AdvancedSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http , AuthenticationManager authenticationManager, HttpServletRequest request) throws Exception {
         http
                 .authorizeRequests()
-                .anyRequest().hasIpAddress("192.168.219.121")
+                .anyRequest().hasIpAddress(authorizedAddress)
                 //.anyRequest().permitAll()
                 .and()
                 // cors config 클래스로 설정을 줄꺼여서 그냥 이대로 주석처리

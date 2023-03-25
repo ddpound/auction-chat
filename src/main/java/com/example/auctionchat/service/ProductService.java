@@ -43,12 +43,14 @@ public class ProductService {
 
     private final ReactiveMongoTemplate mongoTemplate;
 
-
-
     public Mono<ProductModel> saveProduct(ProductModel productModel){
 
         productModel.setCreateAt(LocalDateTime.now());
-        return productRepository.save(productModel);
+        return productRepository.save(productModel)
+                .doFinally(signalType -> {
+                    log.info("success save product : " + productModel.getId()
+                            + ", product name " + productModel.getName());
+                });
     }
 
     public Flux<ResponseEntity<ProductModel>> findListProduct(int roomNum){
@@ -58,8 +60,6 @@ public class ProductService {
     }
 
     public Flux<ResponseEntity<ProductModel>> watchProductUpdates(int roomNum) {
-        System.out.println("번호 1: " + roomNum);
-
         try{
             ChangeStreamOptions options = ChangeStreamOptions.builder()
                     .filter(Aggregation.newAggregation(ProductModel.class, Aggregation.match(
@@ -69,9 +69,6 @@ public class ProductService {
                                     Criteria.where("operationType").is(OperationType.INVALIDATE.getValue()),
                                     Criteria.where("operationType").is(OperationType.INSERT.getValue())))))
                     .returnFullDocumentOnUpdate().build();
-
-            System.out.println("번호 2: " + options.getCollation());
-            System.out.println("번호 3: " + options.getFilter());
 
             Query query = new Query();
             query.addCriteria(Criteria.where("roomNum").is(roomNum));
@@ -88,17 +85,6 @@ public class ProductService {
                             -> new ResponseEntity<>(productModelChangeStreamEvent.getBody(),HttpStatus.OK));
 
             return Flux.merge(merge1,merge2);
-
-//            return mongoTemplate.changeStream(ProductModel.class)
-//                    .watchCollection("productModel")
-//                    .filter(Aggregation.newAggregation(ProductModel.class, Aggregation.match(
-//                            new Criteria().orOperator(
-//                                    Criteria.where("operationType").is(OperationType.UPDATE.getValue()),
-//                                    Criteria.where("operationType").is(OperationType.REPLACE.getValue()),
-//                                    Criteria.where("operationType").is(OperationType.INSERT.getValue())))))
-//                    .listen()
-//                    .map(productModelChangeStreamEvent -> new ResponseEntity<>(productModelChangeStreamEvent.getBody(),HttpStatus.OK))
-//                    .subscribeOn(Schedulers.boundedElastic());
         }catch (Exception e){
             return null;
         }
@@ -106,47 +92,36 @@ public class ProductService {
 
 
 
-
+    /**
+     *
+     * */
     public Mono<ResponseEntity<String>> raisePriceProduct(AuctionRaiseDto auctionRaiseDto){
 
+        if(auctionRaiseDto.getRaisePrice() <= 0 ){
+            log.info("raisePrice fail because price not over 0 won");
+            return Mono.just(new ResponseEntity<String>("I'm sorry. The bidding price is over 0 won", HttpStatus.BAD_REQUEST));
+        }else {
+            return productRepository.findById(auctionRaiseDto.getProduct().getId())
+                    .flatMap((productModel)->{
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("id").is(auctionRaiseDto.getProduct().getId()));
 
-//        return productRepository.findById(auctionRaiseDto.getProduct().getId())
-//                .publishOn(Schedulers.single())
-//                .flatMap((productModel)->{
-//                    ProductModel newProductModel = ProductModel.builder()
-//                            .auction(auctionRaiseDto.getProduct().isAuction())
-//                            .roomNum(auctionRaiseDto.getProduct().getRoomNum())
-//                            .finalBuyer(auctionRaiseDto.getUserdata().getNickName())
-//                            .name(auctionRaiseDto.getProduct().getName())
-//                            .createAt(auctionRaiseDto.getProduct().getCreateAt())
-//                            .price(auctionRaiseDto.getProduct().getPrice()+auctionRaiseDto.getRaisePrice())
-//                            .quantity(auctionRaiseDto.getProduct().getQuantity())
-//                            .seller(auctionRaiseDto.getProduct().getSeller())
-//                            .build();
-//
-//                    productRepository.save(newProductModel).subscribe();
-//                    productRepository.delete(auctionRaiseDto.getProduct()).subscribe();
-//
-//                    return Mono.just(new ResponseEntity<String>("success raise price " , HttpStatus.OK));
-//                });
+                        Update update = new Update();
+                        update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
+                        update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
+                        update.set("createAt", LocalDateTime.now());
 
-        return productRepository.findById(auctionRaiseDto.getProduct().getId())
-                .flatMap((productModel)->{
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("id").is(auctionRaiseDto.getProduct().getId()));
 
-                    Update update = new Update();
-                    update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
-                    update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
-                    update.set("createAt", LocalDateTime.now());
+                        return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
+                                .subscribeOn(Schedulers.boundedElastic())
+                                .map(productModel1 -> {
+                                    log.info("raisePrice user : "+ productModel1.getFinalBuyer());
+                                    log.info("raisePrice + " + productModel1.getPrice());
+                                    return new ResponseEntity<String>("success raise price " + productModel1.getPrice(),HttpStatus.OK);
+                                });
+                    });
+        }
 
-                    return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .map(productModel1 -> new ResponseEntity<String>("success raise price " + productModel1.getPrice(),HttpStatus.OK));
-                }).doFinally(signalType -> {
-                    System.out.println("스트림 변경 알림");
-                    mongoTemplate.changeStream(ProductModel.class);
-                });
     }
 
 }

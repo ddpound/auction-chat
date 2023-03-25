@@ -33,6 +33,11 @@ public class ProductModel {
     // 아니면 일반제품
     private boolean auction;
 
+    // 실시간 경매 유무를 따짐
+    private boolean auctionState;
+
+    private int buyerId;
+
     private String finalBuyer;
 
     private int quantity;

@@ -1,10 +1,12 @@
 package com.example.auctionchat.controller;
 
 import com.ctc.wstx.dtd.ModelNode;
+import com.example.auctionchat.dto.AuctionRaiseDto;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,13 @@ public class SellerProductController {
 
 
         return productService.saveProduct(productModel);
+    }
+
+    @PostMapping("change-auction")
+    public Mono<ResponseEntity<String>> changeAuctionState(@RequestBody AuctionRaiseDto auctionRaiseDto){
+
+
+        return productService.changeAuctionState(auctionRaiseDto);
     }
 
 }

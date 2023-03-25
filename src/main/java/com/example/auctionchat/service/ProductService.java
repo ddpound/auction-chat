@@ -45,6 +45,11 @@ public class ProductService {
 
     public Mono<ProductModel> saveProduct(ProductModel productModel){
 
+        // 경매 시작일 때
+        if(productModel.isAuction()){
+            productModel.setAuctionState(productModel.isAuction());
+        }
+
         productModel.setCreateAt(LocalDateTime.now());
         return productRepository.save(productModel)
                 .doFinally(signalType -> {
@@ -109,6 +114,7 @@ public class ProductService {
                         Update update = new Update();
                         update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
                         update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
+                        update.set("buyerId", auctionRaiseDto.getUserdata().getId());
                         update.set("createAt", LocalDateTime.now());
 
 
@@ -121,6 +127,34 @@ public class ProductService {
                                 });
                     });
         }
+
+    }
+
+    /**
+     * 경매 상태 변경 메소드
+     *
+     *
+     * */
+    public Mono<ResponseEntity<String>> changeAuctionState(AuctionRaiseDto auctionRaiseDto){
+
+        return productRepository.findById(auctionRaiseDto.getProduct().getId())
+                .flatMap((productModel)->{
+
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("id").is(auctionRaiseDto.getProduct().getId()));
+
+                    Update update = new Update();
+
+                    // 현재 상태 변경
+                    update.set("auctionState", !productModel.isAuctionState());
+
+                    return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .map(productModel1 -> {
+                                log.info("chage auction, now auction state : "+ productModel1.isAuction());
+                                return new ResponseEntity<String>("success change auction, auction state : "+ productModel1.isAuction(),HttpStatus.OK);
+                            });
+                    });
 
     }
 

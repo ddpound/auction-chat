@@ -19,6 +19,7 @@ public class ChatModel {
     @Id
     private String id;
     private String msg;
+    // sender는 구글 계정의 nickName을 사용한다.
     private String sender;
     private String receiver; //(귓속말)
 

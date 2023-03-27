@@ -33,9 +33,13 @@ public class OrderService {
 
     public Mono<ResponseEntity<String>> saveOrder(OrderModel orderModel){
 
+        if(orderModel.getQuantity() <= 0){
+            return Mono.just(new ResponseEntity<>("fail order save, less than zero", HttpStatus.BAD_REQUEST));
+        }
+
         return orderRepository
                 .save(orderModel)
-                .map(orderModel1 -> new ResponseEntity<>("success save", HttpStatus.OK))
+                .map(orderModel1 -> new ResponseEntity<>("success order save", HttpStatus.OK))
                 .subscribeOn(Schedulers.single());
     }
 

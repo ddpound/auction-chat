@@ -48,7 +48,7 @@ public class OrderService {
                     .map(productModel -> {
 
                         if(productModel.getQuantity() <= 0
-                                && (productModel.getQuantity()-orderModel.getQuantity()) <= 0){
+                                || (productModel.getQuantity()-orderModel.getQuantity()) <= 0){
 
                             return new ResponseEntity<>("sorry quantity is zero", HttpStatus.OK);
                         }else{
@@ -60,15 +60,11 @@ public class OrderService {
                             update.set("quantity", productModel.getQuantity()-orderModel.getQuantity());
 
 
-                            System.out.println(productModel.getQuantity());
-                            System.out.println(orderModel.getQuantity());
-
-                            //productModel.setQuantity(productModel.getQuantity()-orderModel.getQuantity());
-
                             mongoTemplate
                                     .findAndModify(query,update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
                                     .subscribe();
 
+                            orderModel.setProductModel(productModel);
                             orderRepository.save(orderModel).subscribe();
                             return new ResponseEntity<>("success order save", HttpStatus.OK);
                         }
@@ -85,6 +81,18 @@ public class OrderService {
                 .delete(orderModel)
                 .map(orderModel1 -> new ResponseEntity<>("success delete", HttpStatus.OK))
                 .subscribeOn(Schedulers.single());
+    }
+
+    public Flux<ResponseEntity<OrderModel>> findMyOrder(int userId){
+
+
+        return orderRepository.findMyOrder(userId)
+                .map(orderModel -> {
+                    System.out.println(orderModel.getProductModel());
+
+                    return new ResponseEntity<OrderModel>(orderModel,HttpStatus.OK);
+                })
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
 

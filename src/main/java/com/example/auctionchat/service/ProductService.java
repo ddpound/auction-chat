@@ -47,7 +47,7 @@ public class ProductService {
 
         // 경매 시작일 때
         if(productModel.isAuction()){
-            productModel.setAuctionState(productModel.isAuction());
+            productModel.setAuctionState(true);
         }
 
         productModel.setCreateAt(LocalDateTime.now());

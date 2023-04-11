@@ -13,4 +13,8 @@ public interface ProductRepository extends ReactiveMongoRepository<ProductModel,
     @Query("{roomNum :  ?0}")
     Flux<ProductModel> findRoomReturnProduct(int roomNum);
 
+
+    @Query("{finalBuyer :  ?0, roomNum :  ?1}")
+    Flux<ProductModel> findAuctionFinalBuyer(String finalByuer, int roomNum);
+
 }

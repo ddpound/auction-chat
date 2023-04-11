@@ -22,7 +22,6 @@ public class OrderModel {
     @Id
     private String id;
 
-    @DocumentReference
     private ProductModel productModel;
 
     private int seller;

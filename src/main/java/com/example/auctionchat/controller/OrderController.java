@@ -27,6 +27,7 @@ public class OrderController {
     @PostMapping(value = "save")
     public Mono<ResponseEntity<String>> saveOrder(@RequestBody OrderModel orderModel){
 
+
         return orderService.saveOrder(orderModel);
     }
 
@@ -43,6 +44,12 @@ public class OrderController {
         return productService
                 .raisePriceProduct(auctionRaiseDto)
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @GetMapping(value = "find-my-order/{userId}")
+    public Flux<ResponseEntity<OrderModel>> findMyOrder(@PathVariable int userId){
+
+        return orderService.findMyOrder(userId);
     }
 
 

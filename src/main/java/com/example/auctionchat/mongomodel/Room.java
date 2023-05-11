@@ -2,12 +2,13 @@ package com.example.auctionchat.mongomodel;
 
 
 import lombok.Data;
+import org.joda.time.LocalDateTime;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+
 //import org.joda.time.LocalDateTime; // 바뀐부분
 
 @Data

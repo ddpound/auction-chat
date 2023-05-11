@@ -6,27 +6,27 @@ import com.example.auctionchat.mongomodel.OrderModel;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongorepository.OrderRepository;
 import com.example.auctionchat.mongorepository.ProductRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import org.joda.time.LocalDateTime;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.Tailable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestHeader;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
 
-import java.time.LocalDateTime;
+
 import java.util.Arrays;
-import java.util.List;
+
 
 @RequiredArgsConstructor
 @Log4j2
@@ -38,7 +38,11 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     private final ReactiveMongoTemplate mongoTemplate;
+
+
     public Mono<ResponseEntity<String>> saveOrder(OrderModel orderModel){
+        System.out.println("오더 서비스 세이브 체크");
+        System.out.println(orderModel);
 
         if(orderModel.getQuantity() <= 0){
             return Mono.just(new ResponseEntity<>("fail order save, less than zero", HttpStatus.BAD_REQUEST));
@@ -67,7 +71,9 @@ public class OrderService {
                                     .subscribe();
 
                             orderModel.setProductModel(productModel);
-                            orderModel.setCreateAt(LocalDateTime.now());
+
+                            System.out.println("오더서비스 저장전...");
+
                             orderRepository.save(orderModel).subscribe();
                             return new ResponseEntity<>("success order save", HttpStatus.OK);
                         }
@@ -89,8 +95,6 @@ public class OrderService {
     public Flux<ResponseEntity<OrderModel>> findMyOrder(int userId){
 
         // order 검색하면서 동시에 쇼핑몰 정보도 올려줘야함
-
-
         return orderRepository.findMyOrder(userId)
                 .map(orderModel -> {
                     System.out.println(orderModel.getProductModel());

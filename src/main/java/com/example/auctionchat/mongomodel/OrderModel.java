@@ -3,11 +3,9 @@ package com.example.auctionchat.mongomodel;
 
 import lombok.Builder;
 import lombok.Data;
-
-
 import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+
 
 
 /**
@@ -28,8 +26,5 @@ public class OrderModel {
     private int buyer;
 
     private int quantity;
-
-    private LocalDateTime createAt;
-
 
 }

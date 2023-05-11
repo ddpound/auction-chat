@@ -8,13 +8,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 
+import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-import java.time.LocalDateTime;
+
 import java.util.Objects;
 import java.util.Random;
 
@@ -83,6 +84,7 @@ public class SellerChatService {
             room.setRoomNum(makeRoomNum);
 
             room.setCreateAt(LocalDateTime.now());
+
             return roomRepositry.save(room);
 
         }catch (Exception e){

@@ -3,12 +3,8 @@ package com.example.auctionchat.mongomodel;
 
 import lombok.Builder;
 import lombok.Data;
-
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import javax.persistence.Id;
-import java.time.LocalDateTime;
-
 
 /**
  * 실시간 옥션에 올려놓을 물건을 말함
@@ -41,6 +37,4 @@ public class ProductModel {
     private String finalBuyer;
 
     private int quantity;
-
-    private LocalDateTime createAt;
 }

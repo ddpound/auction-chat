@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 
-
+import org.joda.time.LocalDateTime;
 import org.springframework.data.mongodb.core.*;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,7 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import java.time.LocalDateTime;
+
 
 
 @RequiredArgsConstructor
@@ -45,9 +45,10 @@ public class ProductService {
         // 경매 시작일 때
         if(productModel.isAuction()){
             productModel.setAuctionState(true);
+            productModel.setFinalBuyer("not yet");
         }
 
-        productModel.setCreateAt(LocalDateTime.now());
+        //productModel.setCreateAt(LocalDateTime.now());
         return productRepository.save(productModel)
                 .doFinally(signalType -> {
                     log.info("success save product : " + productModel.getId()
@@ -100,6 +101,7 @@ public class ProductService {
      * */
     public Mono<ResponseEntity<String>> raisePriceProduct(AuctionRaiseDto auctionRaiseDto){
 
+        log.info("auction Raise working");
         if(auctionRaiseDto.getRaisePrice() <= 0 ){
             log.info("raisePrice fail because price not over 0 won");
             return Mono.just(new ResponseEntity<String>("I'm sorry. The bidding price is over 0 won", HttpStatus.BAD_REQUEST));
@@ -113,7 +115,7 @@ public class ProductService {
                         update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
                         update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
                         update.set("buyerId", auctionRaiseDto.getUserdata().getId());
-                        update.set("createAt", LocalDateTime.now());
+                        //update.set("createAt", LocalDateTime.now());
 
 
                         return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)

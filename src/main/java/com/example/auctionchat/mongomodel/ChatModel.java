@@ -4,11 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 
 
+import org.joda.time.LocalDateTime;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 
 @Data

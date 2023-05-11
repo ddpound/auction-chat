@@ -3,10 +3,9 @@ package com.example.auctionchat.mongomodel;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+
+import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 

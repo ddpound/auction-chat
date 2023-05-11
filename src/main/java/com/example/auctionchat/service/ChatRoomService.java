@@ -8,6 +8,7 @@ import com.example.auctionchat.mongorepository.RoomRepositry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+
 import org.springframework.data.mongodb.core.ReactiveFindOperation;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,6 +24,7 @@ import reactor.core.scheduler.Schedulers;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +49,6 @@ public class ChatRoomService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    //@Transactional(readOnly = true)
 
     public Flux<ResponseEntity<ChatModel>> requestRoom(int roomNum) {
 

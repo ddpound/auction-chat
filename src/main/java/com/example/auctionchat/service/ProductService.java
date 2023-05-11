@@ -5,16 +5,14 @@ import com.example.auctionchat.dto.AuctionRaiseDto;
 import com.example.auctionchat.mongomodel.ProductModel;
 import com.example.auctionchat.mongorepository.ProductRepository;
 
-import com.mongodb.client.model.Filters;
+
 import com.mongodb.client.model.changestream.OperationType;
-import com.mongodb.reactivestreams.client.MongoClient;
-import com.mongodb.reactivestreams.client.MongoCollection;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.bson.Document;
 
-import org.bson.conversions.Bson;
+
 import org.springframework.data.mongodb.core.*;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,7 +26,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
-
 
 
 @RequiredArgsConstructor
@@ -78,6 +75,7 @@ public class ProductService {
             Query query = new Query();
             query.addCriteria(Criteria.where("roomNum").is(roomNum));
 
+            // 하나는 insert만 감지, 다른하나는 update만 감지해 둘을 merge시킨다.
             Flux<ResponseEntity<ProductModel>> merge1 =  mongoTemplate.tail(query, ProductModel.class)
                     .map(productModel -> {
                         System.out.println(productModel);

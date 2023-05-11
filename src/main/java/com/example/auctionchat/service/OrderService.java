@@ -8,6 +8,7 @@ import com.example.auctionchat.mongorepository.OrderRepository;
 import com.example.auctionchat.mongorepository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.repository.Tailable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
@@ -65,6 +67,7 @@ public class OrderService {
                                     .subscribe();
 
                             orderModel.setProductModel(productModel);
+                            orderModel.setCreateAt(LocalDateTime.now());
                             orderRepository.save(orderModel).subscribe();
                             return new ResponseEntity<>("success order save", HttpStatus.OK);
                         }
@@ -84,6 +87,22 @@ public class OrderService {
     }
 
     public Flux<ResponseEntity<OrderModel>> findMyOrder(int userId){
+
+        // order 검색하면서 동시에 쇼핑몰 정보도 올려줘야함
+
+
+        return orderRepository.findMyOrder(userId)
+                .map(orderModel -> {
+                    System.out.println(orderModel.getProductModel());
+
+                    return new ResponseEntity<OrderModel>(orderModel,HttpStatus.OK);
+                })
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    public Flux<ResponseEntity<OrderModel>> findAuctionPurchaseDetails(@RequestHeader("Authorization")String token,
+                                                                       @RequestHeader("RefreshToken") String reToken,
+                                                                       int userId){
 
 
         return orderRepository.findMyOrder(userId)

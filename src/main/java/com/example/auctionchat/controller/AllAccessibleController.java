@@ -74,7 +74,7 @@ public class AllAccessibleController {
     }
 
 
-    @GetMapping(value = "find-product/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "live/find-product/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ResponseEntity<ProductModel>> findProduct(@PathVariable Integer roomNum){
 
         return productService.watchProductUpdates(roomNum);
@@ -96,7 +96,7 @@ public class AllAccessibleController {
                         .event("message").build());
     }
 
-    @GetMapping(value = "find-room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "live/find-room/{roomNum}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Object> findRoomNumMerge(@PathVariable Integer roomNum){
 
         //Room findRoom = roomService.roomCheck(roomNum).block();

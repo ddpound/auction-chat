@@ -38,17 +38,25 @@ public class CorsConfig {
         // 내 서버 데이터 응답시 json을 자바 스크립트에서 처리할수 있도록
         config.setAllowCredentials(true);
 
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.contains("win")){
+            // 지금 코드가 위의 setAloowCredentials 와 같이 사용되는걸 권장한다
+            config.addAllowedOriginPattern("http://localhost:3000");
+
+//            config.addAllowedOriginPattern("http://"+ipPort+":3000");
+//            config.addAllowedOriginPattern(ALLOWED_ORIGIN1);
+//            config.addAllowedOriginPattern(ALLOWED_ORIGIN3);
+//            config.addAllowedOriginPattern(ALLOWED_ORIGIN1+":3000");
+//            config.addAllowedOriginPattern(ALLOWED_ORIGIN3+":3000");
+
+        }else{
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN2);
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN4);
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN2+":3000");
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN4+":3000");
+        }
+
         // 지금 코드가 위의 setAloowCredentials 와 같이 사용되는걸 권장한다
-        config.addAllowedOriginPattern("http://localhost:3000");
-        config.addAllowedOriginPattern("http://"+ipPort+":3000");
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN1);
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN2);
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN3);
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN4);
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN1+":3000");
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN2+":3000");
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN3+":3000");
-        config.addAllowedOriginPattern(ALLOWED_ORIGIN4+":3000");
         // 재밌는 점은 아래 코드는 이제 위의 setAllowCredentials 와 함께 사용하는걸
         // 권장하지 않는다
         //config.addAllowedOrigin("*"); // 모든 ip 응답을 허용

@@ -42,10 +42,14 @@ public class ProductService {
 
     public Mono<ProductModel> saveProduct(ProductModel productModel){
 
+        if(productModel.getPrice() < 0 ){
+            return Mono.empty();
+        }
+
         // 경매 시작일 때
         if(productModel.isAuction()){
             productModel.setAuctionState(true);
-            productModel.setFinalBuyer("not yet");
+            productModel.setFinalBuyer("없음");
         }
 
         //productModel.setCreateAt(LocalDateTime.now());
@@ -116,7 +120,6 @@ public class ProductService {
                         update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
                         update.set("buyerId", auctionRaiseDto.getUserdata().getId());
                         //update.set("createAt", LocalDateTime.now());
-
 
                         return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
                                 .subscribeOn(Schedulers.boundedElastic())

@@ -41,8 +41,6 @@ public class OrderService {
 
 
     public Mono<ResponseEntity<String>> saveOrder(OrderModel orderModel){
-        System.out.println("오더 서비스 세이브 체크");
-        System.out.println(orderModel);
 
         if(orderModel.getQuantity() <= 0){
             return Mono.just(new ResponseEntity<>("fail order save, less than zero", HttpStatus.BAD_REQUEST));
@@ -54,7 +52,7 @@ public class OrderService {
                     .map(productModel -> {
 
                         if(productModel.getQuantity() <= 0
-                                || (productModel.getQuantity()-orderModel.getQuantity()) <= 0){
+                                || (productModel.getQuantity()-orderModel.getQuantity()) < 0){
 
                             return new ResponseEntity<>("sorry quantity is zero", HttpStatus.OK);
                         }else{
@@ -72,8 +70,7 @@ public class OrderService {
 
                             orderModel.setProductModel(productModel);
 
-                            System.out.println("오더서비스 저장전...");
-
+                            log.info("success save, buyerId : " + orderModel.getBuyer());
                             orderRepository.save(orderModel).subscribe();
                             return new ResponseEntity<>("success order save", HttpStatus.OK);
                         }
@@ -96,11 +93,7 @@ public class OrderService {
 
         // order 검색하면서 동시에 쇼핑몰 정보도 올려줘야함
         return orderRepository.findMyOrder(userId)
-                .map(orderModel -> {
-                    System.out.println(orderModel.getProductModel());
-
-                    return new ResponseEntity<OrderModel>(orderModel,HttpStatus.OK);
-                })
+                .map(orderModel -> new ResponseEntity<>(orderModel, HttpStatus.OK))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 

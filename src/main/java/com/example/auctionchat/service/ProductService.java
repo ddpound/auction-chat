@@ -106,6 +106,7 @@ public class ProductService {
     public Mono<ResponseEntity<String>> raisePriceProduct(AuctionRaiseDto auctionRaiseDto){
 
         log.info("auction Raise working");
+        log.info(auctionRaiseDto.toString());
         if(auctionRaiseDto.getRaisePrice() <= 0 ){
             log.info("raisePrice fail because price not over 0 won");
             return Mono.just(new ResponseEntity<String>("I'm sorry. The bidding price is over 0 won", HttpStatus.BAD_REQUEST));
@@ -116,16 +117,16 @@ public class ProductService {
                         query.addCriteria(Criteria.where("id").is(auctionRaiseDto.getProduct().getId()));
 
                         Update update = new Update();
-                        update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
+                        //update.set("finalBuyer", auctionRaiseDto.getUserdata().getNickName());
                         update.set("price", productModel.getPrice() + auctionRaiseDto.getRaisePrice());
-                        update.set("buyerId", auctionRaiseDto.getUserdata().getId());
+                       //update.set("buyerId", auctionRaiseDto.getUserdata().getId());
                         //update.set("createAt", LocalDateTime.now());
 
                         return mongoTemplate.findAndModify(query, update, FindAndModifyOptions.options().returnNew(true).upsert(true), ProductModel.class)
                                 .subscribeOn(Schedulers.boundedElastic())
                                 .map(productModel1 -> {
                                     log.info("raisePrice user : "+ productModel1.getFinalBuyer());
-                                    log.info("raisePrice + " + productModel1.getPrice());
+                                    log.info("raisePrice : " + productModel1.getPrice());
                                     return new ResponseEntity<String>("success raise price " + productModel1.getPrice(),HttpStatus.OK);
                                 });
                     });

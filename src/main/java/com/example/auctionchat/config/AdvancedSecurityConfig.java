@@ -69,8 +69,6 @@ public class AdvancedSecurityConfig {
                 .httpBasic().disable()
                 // session은 안하는걸로 , csrf 끄기
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-
         return http.build();
     }
 }

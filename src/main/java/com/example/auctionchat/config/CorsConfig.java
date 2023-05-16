@@ -50,10 +50,10 @@ public class CorsConfig {
 //            config.addAllowedOriginPattern(ALLOWED_ORIGIN3+":3000");
 
         }else{
-            config.addAllowedOriginPattern(ALLOWED_ORIGIN2);
-            config.addAllowedOriginPattern(ALLOWED_ORIGIN4);
-            config.addAllowedOriginPattern(ALLOWED_ORIGIN2+":3000");
-            config.addAllowedOriginPattern(ALLOWED_ORIGIN4+":3000");
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN1);
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN3);
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN1+":3000");
+            config.addAllowedOriginPattern(ALLOWED_ORIGIN3+":3000");
         }
 
         // 지금 코드가 위의 setAloowCredentials 와 같이 사용되는걸 권장한다
